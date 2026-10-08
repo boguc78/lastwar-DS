@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DESERT STORM • SitH</title>
+<style>
+:root{--bg:#080b10;--panel:#111821;--panel2:#171f2b;--line:#2b3746;--text:#f4f6f8;--muted:#8e9aaa;--gold:#e6a33b;--green:#35d38d;--red:#ff606c;--yellow:#f2c94c;--blue:#58a8ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#25180a 0,#080b10 38%);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:24px 16px 60px}.hero{background:linear-gradient(135deg,#29190a,#111821 65%);border:1px solid #66481c;border-radius:24px;padding:30px;box-shadow:0 20px 60px #0008}
+.kicker{color:#f3c66e;letter-spacing:4px;font-size:12px;font-weight:900}.hero h1{font-size:42px;margin:7px 0}.hero p{color:#aeb7c3;max-width:850px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid var(--line);background:#151d28;color:#c1cad5;border-radius:11px;padding:11px 16px;font-weight:900;cursor:pointer}.tab.active{background:var(--gold);color:#111;border-color:var(--gold)}
+.section{display:none}.section.active{display:block}.card{background:linear-gradient(180deg,#121923,#0f141c);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+label{display:block;color:#aab5c3;font-size:12px;font-weight:800;margin-bottom:7px}input,select,textarea{width:100%;background:#090e14;color:white;border:1px solid #303b49;border-radius:10px;padding:12px;font-size:14px;outline:none;resize:vertical}input:focus,select:focus{border-color:var(--gold)}
+button{border:0;border-radius:10px;padding:12px 17px;font-weight:900;cursor:pointer}.primary{background:var(--gold);color:#111}.secondary{background:#27313e;color:white}.danger{background:#542029;color:white}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.muted{color:var(--muted)}.small{font-size:12px}
+.result{margin-top:18px;padding:18px;border-radius:15px;border:1px solid}.ok{background:#0d3022;border-color:#24744e}.no{background:#351419;border-color:#77303a}
+.badge{display:inline-block;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900}.green{background:#145b3e;color:#72e8b1}.red{background:#61232b;color:#ff9da6}.yellow{background:#604c12;color:#ffe38a}.blue{background:#123d69;color:#92c9ff}.gold{background:#604514;color:#ffd77d}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #25303c;font-size:13px}th{font-size:11px;color:#8491a1;text-transform:uppercase}.rank{color:#f2c56b;font-weight:900}.power{font-weight:900}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#0a1017;border:1px solid #27313e;border-radius:14px;padding:14px}.stat strong{font-size:25px;display:block;margin-top:4px}
+.notice{border-left:3px solid var(--gold);background:#17140f;padding:12px;border-radius:8px;color:#c9c2b7}.hidden{display:none!important}
+.login{max-width:430px;margin:40px auto}.lock{font-size:42px;text-align:center}
+@media(max-width:800px){.grid,.grid3,.statgrid{grid-template-columns:1fr}.hero h1{font-size:31px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<div class="kicker">LAST WAR • SITH</div>
+<h1>🏜️ DESERT STORM</h1>
+<p>Çöl Savaşı seçim sistemi. Başvurular kriterlere göre değerlendirilir; uygun oyuncular 1. takım gücüne göre önceliklendirilir.</p>
+</header>
+
+<nav class="tabs">
+<button class="tab active" onclick="tab('apply',this)">Başvuru</button>
+<button id="rankingTab" class="tab adminOnly hidden" onclick="tab('ranking',this)">Bu Hafta</button>
+<button id="historyTab" class="tab adminOnly hidden" onclick="tab('history',this)">Haftalık Geçmiş</button>
+<button id="adminTab" class="tab adminOnly hidden" onclick="tab('admin',this)">Yönetici</button>
+<button id="loginTab" class="tab" onclick="tab('login',this)">Yönetici Girişi</button>
+<button id="logoutTab" class="tab hidden" onclick="logout()">Çıkış</button>
+</nav>
+
+<section id="apply" class="section active">
+<div class="card">
+<h2>🏜️ Çöl Savaşı Başvurusu</h2>
+<p class="muted small">İttifak: <b>SitH</b>. Takım gücünü ve VS değerlerini <b>35M</b>, <b>10M</b> gibi yazabilirsin.</p>
+
+<div class="grid">
+<div><label>Oyuncu adı *</label><input id="name" placeholder="Örn. Player"></div>
+<div><label>İttifak</label><input value="SitH" disabled></div>
+<div><label>1. Takım Gücü *</label><input id="team1" placeholder="35M"></div>
+<div><label>Haftalık Bağış *</label><input id="donation" placeholder="45K"></div>
+</div>
+
+<h3 style="margin-top:24px">Önceki Çöl Savaşı</h3>
+<div class="grid">
+<div><label>Önceki Çarşamba Çöl Savaşı'na katıldı mı?</label><select id="previous"><option value="yes">Evet</option><option value="no">Hayır</option></select></div>
+<div><label>Geçen hafta seçildi mi?</label><select id="lastSelected"><option value="no">Hayır / bilmiyorum</option><option value="yes">Evet</option></select></div>
+</div>
+
+
+<h3 style="margin-top:24px">Günlük VS</h3><p class="muted small"> Değerleri <b>10M</b>, <b>7.2M</b> gibi giriniz.</p>
+<div class="grid3">
+<div><label>Pazartesi</label><input id="mon" placeholder="Örn. 10M"></div>
+<div><label>Salı</label><input id="tue" placeholder="Örn. 10M"></div>
+<div><label>Çarşamba</label><input id="wed" placeholder="Örn. 10M"></div>
+<div><label>Perşembe</label><input id="thu" placeholder="Örn. 10M"></div>
+<div><label>Cuma</label><input id="fri" placeholder="Örn. 10M"></div>
+<div><label>Cumartesi</label><input id="sat" placeholder="Örn. 10M"></div>
+</div>
+
+<h3 style="margin-top:24px">Not</h3>
+<p class="muted small">Başvurunuzla ilgili eklemek istediğiniz bir açıklama varsa yazabilirsiniz.</p>
+<textarea id="note" rows="4" placeholder="İsteğe bağlı açıklamanız..."></textarea>
+<div class="actions"><button id="checkBtn" class="primary" type="button">📊 Uygunluğu Kontrol Et</button><button id="clearBtn" class="secondary" type="button">Temizle</button></div>
+<div id="result" class="hidden"></div>
+</div>
+</section>
+
+<section id="login" class="section">
+<div class="card login">
+<div class="lock">🔐</div>
+<h2 style="text-align:center">Yönetici Girişi</h2>
+<p class="muted small" style="text-align:center">Bu bölüm yalnızca yöneticiler içindir.</p>
+<label>Kullanıcı adı</label><input id="loginUser" autocomplete="username">
+<label style="margin-top:12px">Şifre</label><input id="loginPass" type="password" autocomplete="current-password">
+<div class="actions"><button class="primary" onclick="login()">Giriş Yap</button></div>
+<div id="loginMsg" class="small" style="margin-top:12px"></div>
+</div>
+</section>
+
+<section id="ranking" class="section">
+<div class="card">
+<h2>🏆 Bu Haftanın Sıralaması</h2><p class="muted small">Hafta dönemi: Çarşamba → Salı</p>
+<div class="statgrid"><div class="stat"><span class="muted">Hafta</span><strong id="weekLabel">—</strong></div><div class="stat"><span class="muted">Başvuru</span><strong id="total">0</strong></div><div class="stat"><span class="muted">Uygun</span><strong id="eligible">0</strong></div><div class="stat"><span class="muted">Elenen</span><strong id="bad">0</strong></div></div>
+<div style="overflow:auto;margin-top:18px"><table><thead><tr><th>#</th><th>Oyuncu</th><th>1. Takım</th><th>Bağış</th><th>Durum</th><th>Not</th></tr></thead><tbody id="body"></tbody></table></div>
+</div>
+</section>
+
+<section id="history" class="section">
+<div class="card">
+<h2>📚 Haftalık Geçmiş</h2><p class="muted small">Haftalar Çarşamba günü başlar ve Salı günü sona erer.</p>
+<p class="muted small">Geçmiş haftalar yalnızca yönetici girişi yaptıktan sonra görünür.</p>
+<select id="historyWeek" onchange="renderHistory()"></select>
+<div style="overflow:auto;margin-top:15px"><table><thead><tr><th>#</th><th>Oyuncu</th><th>1. Takım</th><th>Bağış</th><th>Sonuç</th><th>Detay</th><th>Not</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+</div>
+</section>
+
+<section id="admin" class="section">
+<div class="card">
+<h2>⚙️ Yönetici Paneli</h2>
+<p class="muted small">Görev/strateji/kurallara uyum artık burada yönetilir. Oyuncular bu alanı göremez.</p>
+
+<h3>Seçim Ayarları</h3>
+<div class="grid3">
+<div><label>Minimum bağış</label><input id="sDonation"></div>
+<div><label>Minimum VS (M)</label><input id="sVS"></div>
+<div><label>Çarşamba maksimum (M)</label><input id="sWed"></div>
+<div><label>Perşembe maksimum (M)</label><input id="sThu"></div>
+<div><label>Kontenjan</label><input id="sCap"></div>
+</div>
+<div class="actions"><button class="primary" onclick="saveSettings()">Ayarları Kaydet</button></div>
+
+<h3 style="margin-top:26px">Oyuncu Yönetimi</h3>
+<p class="muted small">Oyuncunun önceki savaşta görev/strateji/kurallara uyumunu burada doğrulayabilirsin.</p>
+<div style="overflow:auto"><table><thead><tr><th>Oyuncu</th><th>Önceki DS</th><th>Geçen hafta seçildi</th><th>Kurallara uyum</th><th>Geçen hafta katıldı</th><th>Not</th><th>İşlem</th></tr></thead><tbody id="adminBody"></tbody></table></div>
+
+<div class="actions"><button class="danger" onclick="clearAll()">Tüm verileri sil</button></div>
+</div>
+</section>
+</div>
+
+<script>
+const DEFAULT={donation:45000,vs:7.2,wed:15,thu:20,capacity:40};
+const ADMIN_USER="admin";
+const ADMIN_PASS="Sith2026!";
+let settings=JSON.parse(localStorage.getItem('dsSettingsV6')||'null')||DEFAULT;
+let records=JSON.parse(localStorage.getItem('dsWeeklyRecordsV6')||'[]');
+let adminLogged=localStorage.getItem('dsAdminLogged')==='1';
+
+function $(id){return document.getElementById(id)}
+function fmt(n){return Number(n).toLocaleString('tr-TR')}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+function parseValue(v){
+  if(v===undefined||v===null||String(v).trim()==='') return NaN;
+  let s=String(v).trim().toUpperCase().replace(/\s/g,'').replace(',','.');
+  let mult=1;
+  if(s.endsWith('M')){mult=1000000;s=s.slice(0,-1)}
+  else if(s.endsWith('K')){mult=1000;s=s.slice(0,-1)}
+  const n=Number(s); return Number.isFinite(n)?n*mult:NaN;
+}
+function displayM(n){return (n/1000000).toFixed(n%1000000===0?0:1)+'M'}
+function weekKey(d=new Date()){
+ const x=new Date(d);x.setHours(0,0,0,0);
+ // Desert Storm week runs Wednesday -> Tuesday.
+ // JavaScript: Sunday=0, Monday=1, Tuesday=2, Wednesday=3.
+ const day=x.getDay();
+ const daysSinceWednesday=(day-3+7)%7;
+ x.setDate(x.getDate()-daysSinceWednesday);
+ return x.toISOString().slice(0,10);
+}
+function weekText(k){return new Date(k+'T00:00:00').toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'})}
+function tab(id,b){
+ if(['ranking','history','admin'].includes(id)&&!adminLogged){alert('Bu bölüm yalnızca yöneticiye açıktır.');return}
+ document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');
+ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+ if(id==='ranking')renderRanking();if(id==='history'){fillHistoryWeeks();renderHistory()}if(id==='admin')renderAdmin();
+}
+function login(){
+ if($('loginUser').value===ADMIN_USER && $('loginPass').value===ADMIN_PASS){
+   adminLogged=true;localStorage.setItem('dsAdminLogged','1');updateAuthUI();$('loginMsg').innerHTML='<span class="badge green">Giriş başarılı</span>';tab('admin',$('adminTab'));
+ }else{$('loginMsg').innerHTML='<span class="badge red">Kullanıcı adı veya şifre hatalı.</span>'}
+}
+function logout(){adminLogged=false;localStorage.removeItem('dsAdminLogged');updateAuthUI();tab('apply',document.querySelector('.tab'))}
+function updateAuthUI(){
+ document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!adminLogged));
+ $('loginTab').classList.toggle('hidden',adminLogged);$('logoutTab').classList.toggle('hidden',!adminLogged);
+}
+function pass(v,min,max=null){return Number.isFinite(v)&&v>=min&&(max===null||v<=max)}
+function getHistory(name,currentWeek){
+ const arr=records.filter(x=>x.name.toLowerCase()===name.toLowerCase()&&x.week!==currentWeek).sort((a,b)=>b.week.localeCompare(a.week));
+ return arr[0]||null;
+}
+function evaluate(){
+ try{
+  const p={
+   id:Date.now(),week:weekKey(),name:$('name').value.trim(),alliance:'SitH',
+   team1:parseValue($('team1').value),donation:parseValue($('donation').value),
+   previous:$('previous').value==='yes',lastSelected:$('lastSelected').value==='yes',
+   mon:parseValue($('mon').value),tue:parseValue($('tue').value),wed:parseValue($('wed').value),
+   thu:parseValue($('thu').value),fri:parseValue($('fri').value),sat:parseValue($('sat').value),
+   rulesCompliant:null,attended:null,selected:null,priority:false,penalty:false
+  };
+
+  if(!p.name){
+   showFormError('Oyuncu adı zorunludur.');
+   return;
+  }
+  if(!Number.isFinite(p.team1)){
+   showFormError('1. takım gücünü 35M gibi girmen gerekiyor.');
+   return;
+  }
+
+  const hist=getHistory(p.name,p.week);
+
+  if(hist){
+   p.previous=hist.attended===true || hist.previous===true;
+   p.rulesCompliant=hist.rulesCompliant;
+   p.attended=hist.attended===true;
+   p.selected=hist.selected===true;
+   p.penalty=p.selected && !p.attended;
+   p.priority=hist.eligible===true && p.selected===false && !p.penalty;
+  }
+
+  const checks=[
+   ['Önceki Çöl Savaşı',p.previous,'Önceki Çöl Savaşı’na katılmamış.'],
+   ['Haftalık bağış',Number.isFinite(p.donation)&&p.donation>=settings.donation,`Bağış ${fmt(settings.donation)} altında veya girilmemiş.`],
+   ['Pazartesi VS',pass(p.mon,settings.vs*1000000),`Pazartesi VS ${settings.vs}M altında veya girilmemiş.`],
+   ['Çarşamba VS',pass(p.wed,settings.vs*1000000,settings.wed*1000000),`Çarşamba VS ${settings.vs}M–${settings.wed}M aralığında olmalı.`],
+   ['Perşembe VS',pass(p.thu,settings.vs*1000000,settings.thu*1000000),`Perşembe VS ${settings.vs}M–${settings.thu}M aralığında olmalı.`],
+   ['Cuma VS',pass(p.fri,settings.vs*1000000),`Cuma VS ${settings.vs}M altında veya girilmemiş.`],
+   ['Cumartesi VS',pass(p.sat,settings.vs*1000000),`Cumartesi VS ${settings.vs}M altında veya girilmemiş.`]
+  ];
+
+  let fail=null;
+  for(const c of checks){
+   if(!c[1]){fail=c;break;}
+  }
+
+  p.eligible=!fail&&!p.penalty;
+  p.failed=p.penalty?'1 hafta ceza':(fail?fail[0]:'');
+  p.reason=p.penalty?'Geçen hafta seçildi ancak savaşa katılmadı.':(fail?fail[2]:'');
+
+  records.push(p);
+  save();
+  showResult(p);
+ }catch(err){
+  console.error(err);
+  showFormError('Sistemde bir hata oluştu. Sayfayı Ctrl + F5 ile yenileyip tekrar deneyin.');
+ }
+}
+function showFormError(message){
+ const r=$('result');
+ r.className='result no';
+ r.classList.remove('hidden');
+ r.innerHTML='<span class="badge red">⚠️ KONTROL EDİLEMEDİ</span><p>'+esc(message)+'</p>';
+}
+function showResult(p){
+ const r=$('result');
+ r.className='result ok';
+ r.classList.remove('hidden');
+ r.innerHTML=`
+   <span class="badge green">🟢 BAŞVURUNUZ ALINDI</span>
+   <h3>${esc(p.name)}</h3>
+   <p><b>Çöl Savaşı başvurunuz başarıyla kaydedildi.</b></p>
+   <p>Başvurunuz kriterlere göre değerlendiriliyor.</p>
+   <p class="muted small">Sonuç ve katılım sıralaması yönetici değerlendirmesinden sonra belirlenecektir.</p>
+ `;
+}
+function renderRanking(){
+ const w=weekKey(),list=records.filter(x=>x.week===w),ok=list.filter(x=>x.eligible&&x.rulesCompliant!==false).sort((a,b)=>{
+   if(a.priority!==b.priority)return a.priority?-1:1;return b.team1-a.team1;
+ });
+ $('weekLabel').textContent=weekText(w);$('total').textContent=list.length;$('eligible').textContent=ok.length;$('bad').textContent=list.length-ok.length;
+ const sorted=[...ok,...list.filter(x=>!ok.includes(x))];
+ $('body').innerHTML=sorted.length?sorted.map((p,i)=>{
+   const rank=p.eligible?ok.findIndex(x=>x.id===p.id)+1:'—';
+   const status=p.eligible?(rank<=settings.capacity?'<span class="badge green">KATILABİLİR</span>':'<span class="badge yellow">YEDEK / KONTENJAN DIŞI</span>'):'<span class="badge red">'+(p.penalty?'CEZALI':'ELENDİ')+'</span>';
+   const pri=p.priority?'<span class="badge gold">⭐ ÖNCELİK</span>':'';
+   const rule=p.rulesCompliant===null?'<span class="badge blue">YÖNETİCİ KONTROLÜ BEKLİYOR</span>':(p.rulesCompliant?'<span class="badge green">KURAL ✓</span>':'<span class="badge red">KURAL ✕</span>');
+   return `<tr><td>${rank}</td><td><b>${esc(p.name)}</b></td><td class="power">${displayM(p.team1)}</td><td>${fmt(p.donation)}</td><td>${status} ${pri}<div class="small" style="margin-top:5px">${rule}</div></td><td><div class="small" style="max-width:260px;white-space:pre-wrap">${p.note?esc(p.note):'—'}</div></td></tr>`;
+ }).join(''):'<tr><td colspan="6" class="muted">Bu hafta başvuru yok.</td></tr>';
+}
+function fillHistoryWeeks(){
+ const weeks=[...new Set(records.map(x=>x.week))].sort().reverse(),sel=$('historyWeek'),old=sel.value;
+ sel.innerHTML=weeks.length?weeks.map(w=>`<option value="${w}">${weekText(w)}</option>`).join(''):'<option value="">Kayıt yok</option>';
+ if(weeks.includes(old))sel.value=old;
+}
+function renderHistory(){
+ const w=$('historyWeek').value,list=records.filter(x=>x.week===w),ok=list.filter(x=>x.eligible&&x.rulesCompliant!==false).sort((a,b)=>{if(a.priority!==b.priority)return a.priority?-1:1;return b.team1-a.team1});
+ const sorted=[...ok,...list.filter(x=>!ok.includes(x))];
+ $('historyBody').innerHTML=sorted.length?sorted.map(p=>`<tr><td>${p.eligible?ok.findIndex(x=>x.id===p.id)+1:'—'}</td><td><b>${esc(p.name)}</b></td><td>${displayM(p.team1)}</td><td>${fmt(p.donation)}</td><td>${p.eligible?'<span class="badge green">UYGUN</span>':'<span class="badge red">ELENDİ</span>'} ${p.priority?'<span class="badge gold">⭐</span>':''}</td><td>${p.eligible?(p.rulesCompliant===null?'Kural kontrolü bekliyor':p.rulesCompliant?'Kurallar ✓':'Kurallar ✕'):esc(p.reason)}</td><td><div class="small" style="max-width:260px;white-space:pre-wrap">${p.note?esc(p.note):'—'}</div></td></tr>`).join(''):'<tr><td colspan="7" class="muted">Kayıt yok.</td></tr>';
+}
+function renderAdmin(){
+ $('sDonation').value=settings.donation;$('sVS').value=settings.vs;$('sWed').value=settings.wed;$('sThu').value=settings.thu;$('sCap').value=settings.capacity;
+ const w=weekKey(),list=records.filter(x=>x.week===w);
+ $('adminBody').innerHTML=list.length?list.map(p=>`<tr>
+ <td><b>${esc(p.name)}</b><div class="small muted">${displayM(p.team1)}</div></td>
+ <td>${p.previous?'Evet':'Hayır'}</td>
+ <td><select id="sel_${p.id}"><option value="no" ${p.selected===true?'':'selected'}>Hayır</option><option value="yes" ${p.selected===true?'selected':''}>Evet</option></select></td>
+ <td><select id="rule_${p.id}"><option value="pending" ${p.rulesCompliant===null?'selected':''}>Kontrol edilmedi</option><option value="yes" ${p.rulesCompliant===true?'selected':''}>Uydu</option><option value="no" ${p.rulesCompliant===false?'selected':''}>Uymadı</option></select></td>
+ <td><select id="att_${p.id}"><option value="no" ${p.attended===true?'':'selected'}>Hayır</option><option value="yes" ${p.attended===true?'selected':''}>Evet</option></select></td>
+ <td><div class="small" style="max-width:260px;white-space:pre-wrap">${p.note?esc(p.note):'<span class="muted">Not yok</span>'}</div></td>
+ <td><button class="primary" onclick="savePlayerAdmin(${p.id})">Kaydet</button></td>
+ </tr>`).join(''):'<tr><td colspan="7" class="muted">Bu hafta başvuru yok.</td></tr>';
+}
+function savePlayerAdmin(id){
+ const p=records.find(x=>x.id===id);if(!p)return;
+ p.selected=$(`sel_${id}`).value==='yes';
+ const rule=$(`rule_${id}`).value;p.rulesCompliant=rule==='pending'?null:rule==='yes';
+ p.attended=$(`att_${id}`).value==='yes';
+ p.penalty=p.selected&&!p.attended;
+ // If rules failed, player is not eligible. If rules passed/pending, retain objective criteria result.
+ if(p.rulesCompliant===false){p.eligible=false;p.failed='Görev / strateji / kurallar';p.reason='Yönetici tarafından kurallara uyulmadığı belirtildi.'}
+ else if(p.penalty){p.eligible=false;p.failed='1 hafta ceza';p.reason='Geçen hafta seçildi ancak savaşa katılmadı.'}
+ else if(p.rulesCompliant===true){p.eligible=true;p.failed='';p.reason=''}
+ // Priority: prior-week eligible, not selected. Recalculated for current record using latest older record.
+ const hist=getHistory(p.name,p.week);
+ p.priority=!!(hist&&hist.eligible===true&&hist.selected===false&&!p.penalty);
+ save();renderAdmin();renderRanking();
+}
+function loadSettings(){ $('sDonation').value=settings.donation; $('sVS').value=settings.vs; $('sWed').value=settings.wed; $('sThu').value=settings.thu; $('sCap').value=settings.capacity }
+function saveSettings(){settings={donation:parseValue($('sDonation').value),vs:parseFloat($('sVS').value),wed:parseFloat($('sWed').value),thu:parseFloat($('sThu').value),capacity:Number($('sCap').value)};localStorage.setItem('dsSettingsV6',JSON.stringify(settings));alert('Ayarlar kaydedildi.');renderAdmin();renderRanking()}
+function save(){localStorage.setItem('dsWeeklyRecordsV6',JSON.stringify(records))}
+function clearForm(){
+ ['name','team1','donation','mon','tue','wed','thu','fri','sat','note'].forEach(id=>$(id).value='');
+ $('result').className='hidden';
+}
+function clearAll(){if(confirm('Tüm haftalık kayıtlar silinsin mi?')){records=[];save();renderAdmin();renderRanking();fillHistoryWeeks();renderHistory()}}
+document.addEventListener('DOMContentLoaded',function(){
+ loadSettings();
+ updateAuthUI();
+ renderRanking();
+ $('checkBtn').addEventListener('click',evaluate);
+ $('clearBtn').addEventListener('click',clearForm);
+});
+
+</script>
+</body>
+</html>
