@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çöl Savaşı • SitH</title>
+<style>
+:root{--bg:#0b1118;--card:#111a24;--line:#263444;--text:#f5f7fa;--muted:#9eacbb;--gold:#e7a92f;--green:#58d68d;--red:#ff6b6b;--blue:#5aa9ff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#091019,#111a25);color:var(--text);font:15px Arial,sans-serif}
+header{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#0b1118ee;backdrop-filter:blur(8px);z-index:5}
+h1{font-size:22px;margin:0}.brand{font-weight:800}.brand span{color:var(--gold)}
+nav button,.btn{border:0;border-radius:10px;padding:11px 15px;background:#1c2937;color:#fff;cursor:pointer;font-weight:700}
+nav button.active,.btn.primary{background:var(--gold);color:#151515}.btn.green{background:var(--green);color:#102018}.btn.red{background:#632b32}
+main{max-width:1200px;margin:25px auto;padding:0 18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.card{background:#101923;border:1px solid var(--line);border-radius:15px;padding:20px;margin-bottom:18px}
+.card h2{margin:0 0 15px;font-size:18px}.muted{color:var(--muted)}label{display:block;margin:12px 0 6px;color:#c9d2dc;font-weight:700}
+input,select,textarea{width:100%;background:#0a1119;border:1px solid #314151;border-radius:9px;color:#fff;padding:11px;font:inherit}textarea{min-height:170px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+table{width:100%;border-collapse:collapse}th,td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:left}th{color:#9fb0c1;font-size:12px}
+.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:12px;font-weight:800}.ok{background:#173b2a;color:#7df0aa}.bad{background:#482128;color:#ff9b9b}.wait{background:#3e3215;color:#ffd66b}
+.hidden{display:none!important}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.toolbar>*{margin:0}.stat{font-size:26px;font-weight:900}.small{font-size:12px}.notice{padding:12px;border-radius:10px;background:#162433;color:#c8d8e8;margin:10px 0}
+.result{padding:18px;border:1px solid #37506a;border-radius:12px;background:#101d29}.result h3{margin-top:0;color:#ffd66b}
+pre.output{white-space:pre-wrap;background:#080e14;border:1px solid var(--line);padding:14px;border-radius:10px;line-height:1.55}
+@media(max-width:800px){.grid,.row,.row3{grid-template-columns:1fr}header{position:static;gap:10px;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Çöl Savaşı <span>• SitH</span></div>
+  <nav class="toolbar">
+    <button id="navApply" class="active">Başvuru</button>
+    <button id="navAdmin">Yönetici Girişi</button>
+  </nav>
+</header>
+
+<main>
+<section id="applyPage">
+  <div class="card">
+    <h2>Çöl Savaşı Başvurusu</h2>
+    <div class="muted">Başvurunuzu eksiksiz doldurun. Sonuç ve katılım sıralaması yönetici değerlendirmesinden sonra belirlenir.</div>
+    <div class="row">
+      <div><label>Oyuncu adı</label><input id="name"></div>
+      <div><label>Grup</label><select id="group"><option>A</option><option>B</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>1. Takım Gücü</label><input id="power" placeholder="Örn. 35M"></div>
+      <div><label>Haftalık Bağış</label><input id="donation" placeholder="Örn. 45K"></div>
+    </div>
+    <label>Geçen Çöl Savaşı'na katıldınız mı?</label>
+    <select id="previousAttendance"><option value="yes">Evet</option><option value="no">Hayır</option></select>
+    <div class="row3">
+      <div><label>Pazartesi VS</label><input id="vsMon" placeholder="Örn. 10M"></div>
+      <div><label>Salı VS</label><input id="vsTue" placeholder="Örn. 10M"></div>
+      <div><label>Çarşamba VS</label><input id="vsWed" placeholder="Örn. 10M"></div>
+      <div><label>Perşembe VS</label><input id="vsThu" placeholder="Örn. 10M"></div>
+      <div><label>Cuma VS</label><input id="vsFri" placeholder="Örn. 10M"></div>
+      <div><label>Cumartesi VS</label><input id="vsSat" placeholder="Örn. 10M"></div>
+    </div>
+    <label>Not (opsiyonel)</label><textarea id="note" style="min-height:80px"></textarea>
+    <br><button class="btn primary" id="submitApp">BAŞVURU YAP</button>
+    <div id="applyResult" class="hidden result" style="margin-top:15px">
+      <h3>BAŞVURUNUZ ALINDI</h3>
+      <div>Çöl Savaşı başvurunuz başarıyla kaydedildi.</div>
+      <div>Başvurunuz kriterlere göre değerlendiriliyor.</div>
+      <div>Sonuç ve katılım sıralaması yönetici değerlendirmesinden sonra belirlenecektir.</div>
+    </div>
+  </div>
+</section>
+
+<section id="loginPage" class="hidden">
+  <div class="card" style="max-width:480px;margin:auto">
+    <h2>Yönetici Girişi</h2>
+    <label>Kullanıcı adı</label><input id="loginUser" value="admin">
+    <label>Şifre</label><input id="loginPass" type="password">
+    <br><br><button class="btn primary" id="loginBtn">GİRİŞ YAP</button>
+    <div id="loginError" class="bad hidden" style="padding:10px;margin-top:10px">Kullanıcı adı veya şifre hatalı.</div>
+  </div>
+</section>
+
+<section id="adminPage" class="hidden">
+  <div class="toolbar" style="margin-bottom:15px">
+    <button class="btn" data-tab="apps">Başvurular</button>
+    <button class="btn" data-tab="import">Veri Yapıştır / İçe Aktar</button>
+    <button class="btn" data-tab="selection">Bu Hafta</button>
+    <button class="btn" data-tab="history">Haftalık Geçmiş</button>
+    <button class="btn red" id="logout">ÇIKIŞ</button>
+  </div>
+
+  <div id="tabApps">
+    <div class="card">
+      <div class="toolbar" style="justify-content:space-between"><h2>Başvurular</h2><button class="btn" id="clearApps">Tüm Başvuruları Temizle</button></div>
+      <div id="appsTable"></div>
+    </div>
+  </div>
+
+  <div id="tabImport" class="hidden">
+    <div class="card">
+      <h2>Verileri Kopyala → Yapıştır</h2>
+      <div class="notice">Videoyu ChatGPT'ye gönder. ChatGPT'nin verdiği tabloyu buraya yapıştır. OCR veya ekran görüntüsü yüklemene gerek yok.</div>
+      <div class="row">
+        <div><label>Veri türü</label><select id="importType"><option value="donation">Bağış</option><option value="vs">VS</option></select></div>
+        <div id="dayWrap"><label>VS günü</label><select id="importDay"><option value="mon">Pazartesi</option><option value="tue">Salı</option><option value="wed">Çarşamba</option><option value="thu">Perşembe</option><option value="fri">Cuma</option><option value="sat">Cumartesi</option></select></div>
+      </div>
+      <label>Veri</label>
+      <textarea id="pasteData" placeholder="Örnek:
+Galas	39600
+HolyGuN	39150
+Shrouk	39000
+
+veya:
+Galas | 39.600
+HolyGuN | 39.150"></textarea>
+      <div class="toolbar">
+        <button class="btn primary" id="importBtn">VERİLERİ İÇE AKTAR</button>
+        <button class="btn" id="sampleBtn">ÖRNEK FORMAT</button>
+      </div>
+      <div id="importMsg" class="notice hidden"></div>
+    </div>
+    <div class="card">
+      <h2>İçe Aktarılan Veriler</h2>
+      <div id="importTable"></div>
+    </div>
+    <div class="card">
+      <h2>ChatGPT'ye göndermek için format</h2>
+      <pre class="output">PAZARTESİ
+Galas	7.2M
+HolyGuN	8.4M
+Shrouk	10.1M
+
+BAĞIŞ
+Galas	39600
+HolyGuN	39150
+Shrouk	39000</pre>
+    </div>
+  </div>
+
+  <div id="tabSelection" class="hidden">
+    <div class="card">
+      <h2>Bu Hafta Seçim</h2>
+      <div class="notice">A ve B grupları ayrı değerlendirilir. Her grup en fazla 30 kişi seçilir. Öncelik: geçen hafta kapasite nedeniyle seçilemeyen uygun oyuncular → kriterleri sağlayanlar → sınırlara daha yakın VS değerleri → eşitlikte daha yüksek takım gücü.</div>
+      <div id="selectionTable"></div>
+    </div>
+  </div>
+
+  <div id="tabHistory" class="hidden">
+    <div class="card"><h2>Haftalık Geçmiş</h2><div id="historyTable"></div></div>
+  </div>
+</section>
+</main>
+
+<script>
+const KEY='sith_desert_storm_v30';
+const ADMIN_USER='admin', ADMIN_PASS='Sith2026!';
+const DAYS=['mon','tue','wed','thu','fri','sat'];
+const DAYNAMES={mon:'Pazartesi',tue:'Salı',wed:'Çarşamba',thu:'Perşembe',fri:'Cuma',sat:'Cumartesi'};
+
+function load(){
+  try{return JSON.parse(localStorage.getItem(KEY))||{applications:[],history:[],imports:[]};}
+  catch(e){return {applications:[],history:[],imports:[]};}
+}
+let db=load();
+function save(){localStorage.setItem(KEY,JSON.stringify(db));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+function norm(s){return String(s||'').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9çğıöşü]+/gi,'');}
+function parseNum(v){
+  if(v===null||v===undefined||v==='')return null;
+  let s=String(v).trim().toUpperCase().replace(/\\s/g,'').replace(/,/g,'.');
+  if(!s)return null;
+  let mult=1;
+  if(s.endsWith('M')){mult=1e6;s=s.slice(0,-1)}
+  else if(s.endsWith('K')){mult=1e3;s=s.slice(0,-1)}
+  s=s.replace(/\\./g,''); 
+  if(/\\d+\\.\\d+$/.test(String(v).replace(',','.'))){s=String(v).replace(',','.')}
+  const n=parseFloat(s);
+  return Number.isFinite(n)?n*mult:null;
+}
+function fmt(n){
+  if(n==null)return '-';
+  if(n>=1e6)return (n/1e6).toFixed(1).replace('.0','')+'M';
+  if(n>=1e3)return Math.round(n/1e3)+'K';
+  return Math.round(n).toLocaleString('tr-TR');
+}
+function display(n){return n==null?'-':Math.round(n).toLocaleString('tr-TR');}
+function weekKey(d=new Date()){
+  const x=new Date(d); const day=x.getDay(); const diff=(day+4)%7; x.setDate(x.getDate()-diff);
+  return x.toISOString().slice(0,10);
+}
+function distance(v,limit){return v==null?999999999:Math.abs(v-limit)}
+
+function recalculateRecords(){
+  for(const r of db.applications){
+    const eligible =
+      (r.donation||0)>=45000 &&
+      (r.vs?.mon||0)>=7200000 &&
+      (r.vs?.wed||0)>=7200000 && (r.vs?.wed||0)<=15000000 &&
+      (r.vs?.thu||0)>=7200000 && (r.vs?.thu||0)<=20000000 &&
+      (r.vs?.fri||0)>=7200000 &&
+      (r.vs?.sat||0)>=7200000;
+    r.eligible=!!eligible;
+    r.penalty=(r.previousSelected===true && r.previousAttendance===false);
+    r.priority=(r.previousSelected===false && r.previousEligible===true && r.previousAttendance!==false);
+  }
+  save();
+}
+function fuzzy(a,b){
+  a=norm(a);b=norm(b);if(!a||!b)return 0;if(a===b)return 1;
+  const m=Math.max(a.length,b.length), d=lev(a,b);return 1-d/m;
+}
+function lev(a,b){
+  const dp=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));
+  for(let i=0;i<=a.length;i++)dp[i][0]=i;for(let j=0;j<=b.length;j++)dp[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return dp[a.length][b.length];
+}
+function matchRecord(name){
+  let best=null,score=0;
+  for(const r of db.applications){const s=fuzzy(name,r.name);if(s>score){score=s;best=r}}
+  return score>=.68?best:null;
+}
+function parseLines(text){
+  return text.split(/\\r?\\n/).map(x=>x.trim()).filter(Boolean).filter(x=>!/^[-=]+$/.test(x))
+    .map(line=>{
+      let p=line.split(/\\t|\\s*\\|\\s*|\\s*;\\s*/);
+      if(p.length<2){
+        const m=line.match(/^(.*?)[\\s]+([0-9][0-9.,]*\\s*[MK]?)$/i); if(m)p=[m[1],m[2]];
+      }
+      if(p.length<2)return null;
+      const name=p[0].trim().replace(/^\\d+[.)-]\\s*/,'');
+      const value=parseNum(p[1]);
+      return name&&value!=null?{name,value}:null;
+    }).filter(Boolean);
+}
+function importData(){
+  const type=document.getElementById('importType').value, day=document.getElementById('importDay').value;
+  const rows=parseLines(document.getElementById('pasteData').value);
+  if(!rows.length){setMsg('Okunabilir veri bulunamadı. Her satır: Oyuncu<TAB>Değer şeklinde olmalı.','bad');return}
+  let added=0,matched=0;
+  for(const x of rows){
+    const r=matchRecord(x.name);
+    if(r){
+      matched++;
+      if(type==='donation')r.donation=x.value;else r.vs[day]=x.value;
+    }
+    db.imports.push({id:uid(),type,day,name:x.name,value:x.value,matched:r?.name||null,week:weekKey(),at:new Date().toISOString()});
+    added++;
+  }
+  recalculateRecords(); renderAll();
+  setMsg(`${added} veri okundu, ${matched} başvuruyla eşleştirildi. Eşleşmeyenler aşağıdaki tabloda görünür.`,'ok');
+}
+function setMsg(t,cls){
+  const e=document.getElementById('importMsg');e.textContent=t;e.className='notice '+(cls==='bad'?'bad':'');
+}
+function renderApps(){
+  const e=document.getElementById('appsTable');
+  if(!db.applications.length){e.innerHTML='<div class="muted">Henüz başvuru yok.</div>';return}
+  e.innerHTML='<table><thead><tr><th>Oyuncu</th><th>Grup</th><th>Güç</th><th>Bağış</th><th>VS</th><th>Durum</th><th>Yönetici</th></tr></thead><tbody>'+
+  db.applications.map(r=>`<tr><td><b>${esc(r.name)}</b><div class="small muted">${esc(r.note||'')}</div></td><td>${r.group}</td><td>${fmt(r.power)}</td><td>${display(r.donation)}</td><td>${DAYS.map(d=>DAYNAMES[d]+': '+fmt(r.vs[d])).join('<br>')}</td><td>${r.eligible?'<span class="badge ok">Uygun</span>':'<span class="badge bad">Eksik</span>'}</td><td><select onchange="adminUpdate('${r.id}',this.value)"><option value="pending" ${r.rules==='pending'?'selected':''}>Kurallar bekliyor</option><option value="yes" ${r.rules==='yes'?'selected':''}>Kurallar uygun</option><option value="no" ${r.rules==='no'?'selected':''}>Kurallar uygun değil</option></select><br><label class="small"><input type="checkbox" onchange="togglePrev('${r.id}',this.checked)" ${r.previousSelected?'checked':''}> Geçen hafta seçildi</label></td></tr>`).join('')+'</tbody></table>';
+}
+function adminUpdate(id,v){const r=db.applications.find(x=>x.id===id);if(r){r.rules=v;save();renderAll()}}
+function togglePrev(id,v){const r=db.applications.find(x=>x.id===id);if(r){r.previousSelected=v;save();recalculateRecords();renderAll()}}
+function selectGroup(g){
+  const arr=db.applications.filter(r=>r.group===g&&r.eligible&&!r.penalty&&r.rules!=='no');
+  arr.sort((a,b)=>{
+    if(!!b.priority!==!!a.priority)return b.priority?1:-1;
+    const da=distance(a.vs.wed,15000000)+distance(a.vs.thu,20000000);
+    const dbb=distance(b.vs.wed,15000000)+distance(b.vs.thu,20000000);
+    if(da!==dbb)return da-dbb;
+    return (b.power||0)-(a.power||0);
+  });
+  return arr.slice(0,30);
+}
+function renderSelection(){
+  recalculateRecords();
+  let out='';
+  for(const g of ['A','B']){
+    const selected=selectGroup(g), ids=new Set(selected.map(x=>x.id));
+    out+=`<h3>Grup ${g} — ${selected.length}/30</h3><table><thead><tr><th>#</th><th>Oyuncu</th><th>Güç</th><th>Bağış</th><th>Çarşamba</th><th>Perşembe</th><th>Öncelik</th></tr></thead><tbody>`;
+    out+=selected.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${fmt(r.power)}</td><td>${display(r.donation)}</td><td>${fmt(r.vs.wed)}</td><td>${fmt(r.vs.thu)}</td><td>${r.priority?'<span class="badge ok">Öncelik</span>':'-'}</td></tr>`).join('');
+    out+='</tbody></table><hr style="border-color:#263444;margin:25px 0">';
+    const rejected=db.applications.filter(r=>r.group===g&&!ids.has(r.id));
+    if(rejected.length) out+=`<div class="small muted">Seçilmeyen: ${rejected.map(r=>esc(r.name)).join(', ')}</div>`;
+  }
+  document.getElementById('selectionTable').innerHTML=out||'<div class="muted">Veri yok.</div>';
+}
+function renderImport(){
+  const rows=db.imports.slice(-100).reverse();
+  document.getElementById('importTable').innerHTML=rows.length?'<table><thead><tr><th>Tür</th><th>Gün</th><th>OCR/Video adı</th><th>Değer</th><th>Eşleşen başvuru</th></tr></thead><tbody>'+
+  rows.map(x=>`<tr><td>${x.type==='donation'?'Bağış':'VS'}</td><td>${x.type==='donation'?'—':DAYNAMES[x.day]}</td><td>${esc(x.name)}</td><td>${display(x.value)}</td><td>${x.matched?'<span class="badge ok">'+esc(x.matched)+'</span>':'<span class="badge bad">Eşleşmedi</span>'}</td></tr>`).join('')+'</tbody></table>':'<div class="muted">Henüz veri aktarılmadı.</div>';
+}
+function renderHistory(){
+  document.getElementById('historyTable').innerHTML=db.history.length?'<table><thead><tr><th>Hafta</th><th>Başvuru</th><th>A</th><th>B</th></tr></thead><tbody>'+db.history.slice().reverse().map(h=>`<tr><td>${h.week}</td><td>${h.total}</td><td>${h.a}</td><td>${h.b}</td></tr>`).join('')+'</tbody></table>':'<div class="muted">Henüz haftalık geçmiş yok.</div>';
+}
+function renderAll(){recalculateNoSave();renderApps();renderImport();renderSelection();renderHistory();}
+function recalculateNoSave(){
+  for(const r of db.applications){
+    r.eligible=(r.donation||0)>=45000&&(r.vs.mon||0)>=7200000&&(r.vs.wed||0)>=7200000&&(r.vs.wed||0)<=15000000&&(r.vs.thu||0)>=7200000&&(r.vs.thu||0)<=20000000&&(r.vs.fri||0)>=7200000&&(r.vs.sat||0)>=7200000;
+    r.penalty=r.previousSelected===true&&r.previousAttendance===false;
+  } save();
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function submit(){
+  const name=document.getElementById('name').value.trim(); if(!name){alert('Oyuncu adı gerekli.');return}
+  const r={id:uid(),week:weekKey(),name,group:document.getElementById('group').value,power:parseNum(document.getElementById('power').value),donation:parseNum(document.getElementById('donation').value),previousAttendance:document.getElementById('previousAttendance').value==='yes',previousSelected:false,rules:'pending',previousEligible:false,note:document.getElementById('note').value.trim(),vs:{}};
+  for(const d of DAYS)r.vs[d]=parseNum(document.getElementById('vs'+d[0].toUpperCase()+d.slice(1)).value);
+  db.applications=db.applications.filter(x=>!(x.name.toLowerCase()===name.toLowerCase()&&x.week===r.week));db.applications.push(r);recalculateRecords();
+  document.getElementById('applyResult').classList.remove('hidden'); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+function login(){
+  const ok=document.getElementById('loginUser').value===ADMIN_USER&&document.getElementById('loginPass').value===ADMIN_PASS;
+  if(!ok){document.getElementById('loginError').classList.remove('hidden');return}
+  sessionStorage.admin='1'; show('adminPage');show('applyPage',false);show('loginPage',false);renderAll();
+}
+function show(id,on=true){document.getElementById(id).classList.toggle('hidden',!on)}
+document.getElementById('navApply').onclick=()=>{show('applyPage');show('loginPage',false);show('adminPage',false)};
+document.getElementById('navAdmin').onclick=()=>{if(sessionStorage.admin==='1'){show('adminPage');show('applyPage',false);show('loginPage',false);renderAll()}else{show('loginPage');show('applyPage',false);show('adminPage',false)}};
+document.getElementById('loginBtn').onclick=login;document.getElementById('submitApp').onclick=submit;
+document.getElementById('importBtn').onclick=importData;
+document.getElementById('sampleBtn').onclick=()=>document.getElementById('pasteData').value='Galas\\t39600\\nHolyGuN\\t39150\\nShrouk\\t39000\\nNami NaSa Haa\\t37150\\nTARIQ\\t32900\\nKOD Vader\\t25900';
+document.getElementById('logout').onclick=()=>{sessionStorage.removeItem('admin');location.reload()};
+document.getElementById('clearApps').onclick=()=>{if(confirm('Tüm başvurular silinsin mi?')){db.applications=[];db.imports=[];save();renderAll()}};
+document.getElementById('importType').onchange=()=>document.getElementById('dayWrap').classList.toggle('hidden',document.getElementById('importType').value==='donation');
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{
+  ['tabApps','tabImport','tabSelection','tabHistory'].forEach(x=>document.getElementById(x).classList.add('hidden'));
+  document.getElementById('tab'+b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1)).classList.remove('hidden');
+});
+if(sessionStorage.admin==='1'){show('adminPage');show('applyPage',false)}else{show('applyPage');show('adminPage',false);show('loginPage',false)}
+</script>
+</body>
+</html>
